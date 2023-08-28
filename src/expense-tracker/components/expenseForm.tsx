@@ -11,24 +11,26 @@ const schema = z.object({
   amount: z
     .number({ invalid_type_error: "Amount field is required!" })
     .min(10, { message: "Amount must be at least 10" }),
-  catagory: z
+  category: z
     .string()
     .min(3, { message: "One Category must be selected haha" }),
 });
 
+interface Props {
+  onSubmit: (data: FormData) => void;
+}
 
 type FormData = z.infer<typeof schema>;
 
-function expenseForm() {
+const ExpenseForm = ({ onSubmit } : Props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors , isValid },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
-  const onSubmit = (data: FieldValues) => console.log(data);
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+  return ( 
+    <form onSubmit={handleSubmit(data => onSubmit(data))}>
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
           Description
@@ -43,6 +45,7 @@ function expenseForm() {
           <p className="text-danger">{errors.description.message}</p>
         )}
       </div>
+
       <div className="mb-3">
         <label htmlFor="amount" className="form-label">
           Amount
@@ -57,23 +60,27 @@ function expenseForm() {
           <p className="text-danger">{errors.amount.message}</p>
         )}
       </div>
+
       <div className="mb-3">
         <label htmlFor="catagory" className="form-label">
           Catagory
         </label>
-        <select name="catagory" id="" className="form-select">
+        <select
+          {...register("category")}
+          name="category"
+          id="catagory"
+          className="form-select"
+        >
           <option value=""></option>
-          {Catagories.map((catagory) => (
-            <option key={catagory} value={catagory}>
-              {" "}
-              {catagory}{" "}
+          {Catagories.map((category) => (
+            <option key={category} value={category}>
+              {category}
             </option>
           ))}
         </select>
       </div>
-      <button className="btn btn-primary">Submit</button>
+      <button disabled = {!isValid} className="btn btn-primary">Submit</button>
     </form>
   );
-}
-
-export default expenseForm;
+};
+export default ExpenseForm;

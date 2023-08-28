@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import ExpenseForm from "./expense-tracker/components/expenseForm";
 import ExpenseFilter from "./expense-tracker/components/ExpenseFilter";
 import ExpenseList from "./expense-tracker/components/ExpenseList";
@@ -21,10 +21,10 @@ const App = () => {
   return (
     <div>
       <div className="mb-5">
-        <Form></Form>
+        <Form />
       </div>
       <div className="mb-3">
-        <ExpenseForm />
+        <ExpenseForm onSubmit = {expense => setExpenses([...expenses, { ...expense , id : expenses.length + 1}])}/>
       </div>
       <div className="mb-3">
         <ExpenseFilter
