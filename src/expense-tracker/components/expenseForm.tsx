@@ -2,20 +2,19 @@ import React, { FormEvent, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
-import { Catagories } from "../../App";
-
+import Categories from "../Categories";
 const schema = z.object({
   description: z
     .string()
-    .min(3, { message: "Description must be at least three characters haha" }),
+    .min(0.01, { message: "Description must be at least three characters haha" })
+    .max(100_000 , { message: "Name must be at most 50 characters haha" }),
   amount: z
     .number({ invalid_type_error: "Amount field is required!" })
     .min(10, { message: "Amount must be at least 10" }),
   category: z
-    .string()
-    .min(3, { message: "One Category must be selected haha" }),
-});
-
+    .enum(Categories , {errorMap : () => ({message : "Category is required bro haha"})}),
+    
+})
 interface Props {
   onSubmit: (data: FormData) => void;
 }
@@ -72,14 +71,17 @@ const ExpenseForm = ({ onSubmit } : Props) => {
           className="form-select"
         >
           <option value=""></option>
-          {Catagories.map((category) => (
+          {Categories.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
           ))}
         </select>
+        {errors.category && (
+          <p className="text-danger">{errors.category.message}</p>
+        )}
       </div>
-      <button disabled = {!isValid} className="btn btn-primary">Submit</button>
+      <button  className="btn btn-primary">Submit</button>
     </form>
   );
 };
